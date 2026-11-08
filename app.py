@@ -62,25 +62,26 @@ if submitted:
         st.warning("성씨와 태어난 시간을 모두 입력해 주세요.")
     else:
         with st.spinner("사주 분석 및 글로벌 감각의 길격 이름을 도출하고 있습니다..."):
-            client = genai.Client(api_key=api_key)
-            user_prompt = f"""
-            - 성씨: {last_name}
-            - 성별: {gender}
-            - 생년월일: {calendar_type} {birth_date.strftime('%Y년 %m월 %d일')}
-            - 태어난 시간: {birth_time}
-            - 선호 스타일: {preference if preference else '없음'}
-            위 조건에 맞추어 최고 길격의 글로벌 호환 한글·영문 이름을 작명해 주세요.
-            """
-            
-            response = client.models.generate_content(
-                model="gemini-3.8-flash",
-                contents=user_prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_INSTRUCTIONS,
-                    temperature=0.2,
+            try:
+                client = genai.Client(api_key=api_key)
+                user_prompt = f"""
+                - 성씨: {last_name}
+                - 성별: {gender}
+                - 생년월일: {calendar_type} {birth_date.strftime('%Y년 %m월 %d일')}
+                - 태어난 시간: {birth_time}
+                - 선호 스타일: {preference if preference else '없음'}
+                위 조건에 맞추어 최고 길격의 글로벌 호환 한글·영문 이름을 작명해 주세요.
+                """
+                
+                response = client.models.generate_content(
+                    model="gemini-3.8-flash",
+                    contents=user_prompt,
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTIONS,
+                        temperature=0.2,
+                    )
                 )
-            )
-               st.markdown("---")
+                st.markdown("---")
                 st.markdown(response.text)
             except Exception as e:
                 if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
