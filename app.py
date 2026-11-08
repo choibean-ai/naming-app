@@ -80,5 +80,10 @@ if submitted:
                     temperature=0.2,
                 )
             )
-            st.markdown("---")
-            st.markdown(response.text)
+               st.markdown("---")
+                st.markdown(response.text)
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    st.warning("⏳ 무료 이용 요청 한도를 초과했습니다. 약 15~30초 후 다시 '작명 결과 확인하기'를 눌러주세요.")
+                else:
+                    st.error(f"오류가 발생했습니다: {e}")
